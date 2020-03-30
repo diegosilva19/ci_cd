@@ -18,6 +18,7 @@ services:
       - 'traefik.enable=true'
       - "traefik.http.services.jenkins.LoadBalancer.server.Port=8080"
       - "traefik.http.routers.jenkins.rule=Host(`localhost`) && PathPrefix(`/jenkins`)"
+      #- "traefik.http.routers.jenkins.rule=Host(`jenkins.localhost`)" #subdomain
       - "traefik.http.routers.jenkins.service=jenkins"
 networks:
   traefik_traefik:

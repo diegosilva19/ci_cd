@@ -14,6 +14,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - "traefik.http.routers.nexus.rule=Host(`localhost`) && PathPrefix(`/nexus`)"
+      #- "traefik.http.routers.nexus.rule=Host(`nexus.localhost`)" #subdomain - remove NEXUS_CONTEXT
       - "traefik.port=8081"
 networks:
   traefik_traefik:

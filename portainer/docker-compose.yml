@@ -12,13 +12,14 @@ services:
       - traefik_traefik
     labels:
       - "traefik.enable=true"
-      #- "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)" this is easy way to run
-      - "traefik.http.routers.portainer.rule=Host(`localhost`) && PathPrefix(`/portainer`)"
+      - "traefik.port=9000"
       - "traefik.http.services.portainer.LoadBalancer.server.port=9000"
+
+      #- "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)" #subdomain - needs remove rules middleware
+      - "traefik.http.routers.portainer.rule=Host(`localhost`) && PathPrefix(`/portainer`)"
 
       - "traefik.http.middlewares.portainer.chain.middlewares=strip-prefix-1,strip-prefix-2"
       - "traefik.http.routers.portainer.middlewares=portainer"
-      - "traefik.port=9000"
 
       #These can go either in the Traefic labels or in with portainer
       #copied from https://www.reddit.com/r/Traefik/comments/ezj88o/path_based_redirection_pain_and_suffering_v2/

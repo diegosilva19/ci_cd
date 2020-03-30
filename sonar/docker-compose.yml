@@ -8,14 +8,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sonar.service=sonarqube-sonar"
-      #- "traefik.http.routers.sonar.entrypoints=sonar"
 
-      #- "traefik.http.routers.sonar.rule=Host(`sonar.localhost`)"  #works
+      #- "traefik.http.routers.sonar.rule=Host(`sonar.localhost`)"  #subdomain
 
       - "traefik.http.routers.sonar.rule=Host(`localhost`) && PathPrefix(`/sonarqube`)"
       #- "traefik.http.middlewares.sonar-stripprefix.stripprefix.prefixes=/sonarqube"
       #- "traefik.http.routers.sonar.middlewares=sonar-stripprefix"
-
 
       #- "traefik.http.middlewares.sonar-prefix.addprefix.prefix=/sonar"
 
