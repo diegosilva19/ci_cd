@@ -1,0 +1,24 @@
+version: '3'
+services:
+  jenkins:
+    build: .
+    container_name: jenkins
+    image: dtavares/jenkins:lts
+    environment:
+      - JENKINS_OPTS=--prefix=/jenkins
+    networks:
+      - traefik_traefik
+    ports:
+      - 50000:50000
+    volumes:
+      - './jenkins_home:/var/jenkins_home'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '/usr/bin/docker:/usr/bin/docker'
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.http.services.jenkins.LoadBalancer.server.Port=8080"
+      - "traefik.http.routers.jenkins.rule=Host(`localhost`) && PathPrefix(`/jenkins`)"
+      - "traefik.http.routers.jenkins.service=jenkins"
+networks:
+  traefik_traefik:
+    external: true

@@ -1,0 +1,40 @@
+version: '3.3'
+
+services:
+  reverse-proxy:
+    container_name: traefik
+    image: traefik:v2.2
+    environment:
+      - TRAEFIK_ACCESSLOG=true
+      - TRAEFIK_API_DEBUG=true
+      - TRAEFIK_LOG=true
+      #logs common or json (kibana input)
+      - TRAEFIK_LOG_FORMAT=common
+      - TRAEFIK_LOG_LEVEL=ERROR
+      - TRAEFIK_METRICS_DATADOG_ADDRESS=localhost:8125
+    networks:
+      - traefik
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.sonar.address=:9000"
+      - "--entrypoints.nexus.address=:8081"
+      #- "--providers.docker.tls.ca=path/to/ca.crt" SSL
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+      - "8125:8125"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      #- ./traefik.yml:/etc/traefik/traefik.yml # config file to avoid use commands
+
+networks:
+  traefik:
+    driver: bridge

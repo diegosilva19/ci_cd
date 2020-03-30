@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock #necessary to bin socket docker to get local registry images
+    container_name: portainer
+    volumes:
+      - ./portainer-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock #necessary to acess local registry docker
+    networks:
+      - traefik_traefik
+    labels:
+      - "traefik.enable=true"
+      #- "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)" this is easy way to run
+      - "traefik.http.routers.portainer.rule=Host(`localhost`) && PathPrefix(`/portainer`)"
+      - "traefik.http.services.portainer.LoadBalancer.server.port=9000"
+
+      - "traefik.http.middlewares.portainer.chain.middlewares=strip-prefix-1,strip-prefix-2"
+      - "traefik.http.routers.portainer.middlewares=portainer"
+      - "traefik.port=9000"
+
+      #These can go either in the Traefic labels or in with portainer
+      #copied from https://www.reddit.com/r/Traefik/comments/ezj88o/path_based_redirection_pain_and_suffering_v2/
+      - "traefik.http.middlewares.strip-prefix-1.redirectregex.regex=^(https?://[^/]+/[a-z0-9_]+)$$"
+      - "traefik.http.middlewares.strip-prefix-1.redirectregex.replacement=$${1}/"
+      - "traefik.http.middlewares.strip-prefix-1.redirectregex.permanent=true"
+      - "traefik.http.middlewares.strip-prefix-2.stripprefixregex.regex=/[a-z0-9_]+"
+networks:
+  traefik_traefik:
+    external: true
